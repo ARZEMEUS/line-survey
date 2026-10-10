@@ -98,7 +98,7 @@ function App() {
       return alert('ระยะทางต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป')
     }
 
-    const requiresAngle = ['INL', 'INR', 'OUT'].includes(selectedCode)
+    const requiresAngle = ['ST', 'OUT'].includes(selectedCode)
     if (requiresAngle && selectedSide === 'CENTER') {
   return alert('กรุณาเลือกฝั่ง LEFT หรือ RIGHT สำหรับ INL, INR และ OUT')
 }
@@ -106,7 +106,7 @@ function App() {
 
     if (requiresAngle) {
       if (angle.trim() === '') {
-        return alert('กรุณากรอก ANGLE สำหรับ INL, INR หรือ OUT')
+        return alert('กรุณากรอก ANGLE สำหรับ ST หรือ OUT')
       }
 
       angleValue = Number(angle)
@@ -209,12 +209,10 @@ const lifeRows = life.map((x, i) => ({
   'X4': x.input4
 }))
 
-    // Excel Layout: รวม Survey Points และ Life of Way ตามระยะทาง
-    // ใช้คอลัมน์ E (STA (m)) เก็บ Distance
-    // ตัดคอลัมน์ Survey (m) ออก และใช้ Input 1-4 ลง X1-X4 โดยตรง
+
     const layoutEntries = [
       ...points.map(p => {
-        const isInOutCode = ['INL', 'INR', 'OUT'].includes(p.blockCode)
+        const isInOutCode = ['ST', 'OUT'].includes(p.blockCode)
 
         return {
           distance: p.distance,
@@ -373,7 +371,7 @@ if (ws4['H1']) ws4['H1'].v = 'in/out'
         <div className="form-grid">
           <label>Distance (m)<input inputMode="decimal" value={distance} onChange={e => setDistance(e.target.value)} /></label>
           <label>Block Code<button className="select-button" onClick={() => setShowCodes(true)}>{selectedCode}</button></label>
-          {['INL', 'INR', 'OUT'].includes(selectedCode) && (
+          {['ST', 'OUT'].includes(selectedCode) && (
   <label>
     ANGLE (จำเป็น)
     <input
