@@ -161,8 +161,6 @@ function App() {
       }))
     ]
 
-    }))
-
     const wb = XLSX.utils.book_new()
     const ws1 = XLSX.utils.json_to_sheet(surveyRows)
     const ws2 = XLSX.utils.json_to_sheet(lifeRows)
