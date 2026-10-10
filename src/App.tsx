@@ -224,9 +224,42 @@ function App() {
       }))
     ]
 
-    const layoutRows = layoutEntries
-      .sort((a, b) => a.distance - b.distance)
-      .map(entry => entry.row)
+    
+    const layoutRows = [
+      ...points.map((p) => ({
+        'ANGLE': '',
+        'TEXT': p.remark,
+        'BLOCK': p.side === 'LEFT' ? p.blockCode : '',
+        'in/out': '',
+        'STA (m)': p.side === 'CENTER' ? p.distance : '',
+        'BLOCK_R': p.side === 'RIGHT' ? p.blockCode : '',
+        'TEXT_R': p.side === 'RIGHT' ? p.description : '',
+        'Survey (m)': p.side === 'RIGHT' ? p.distance : '',
+        'X1': '',
+        'X2': '',
+        'X3': '',
+        'X4': '',
+        'LANE': '',
+        'RESET': ''
+      })),
+      ...life.map((x) => ({
+        'ANGLE': '',
+        'TEXT': '',
+        'BLOCK': '',
+        'in/out': '',
+        'STA (m)': x.distance,
+        'BLOCK_R': '',
+        'TEXT_R': '',
+        'Survey (m)': '',
+        'X1': x.input1,
+        'X2': x.input2,
+        'X3': x.input3,
+        'X4': x.input4,
+        'LANE': '',
+        'RESET': ''
+      }))
+    ]
+
 
     const wb = XLSX.utils.book_new()
     const ws1 = XLSX.utils.json_to_sheet(surveyRows)
