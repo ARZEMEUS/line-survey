@@ -45,8 +45,9 @@ export const BLOCK_CODES: BlockCode[] = [
   { code: 'EGAT500', description: 'จุดกึ่งกลาง Line EGAT 500 kV', group: 'แนวสายส่ง EGAT' },
   { code: 'PIPE', description: 'ท่อลอด (PIPE)', group: 'อุปกรณ์เพิ่มเติม' },
   { code: 'PIB', description: 'เริ่มท่อลอด (PIPE BEGIN)', group: 'อุปกรณ์เพิ่มเติม' },
-  { code: 'PIE', description: 'สุดท่อลอด (PIPE END)', group: 'อุปกรณ์เพิ่มเติม' }
+  { code: 'PIE', description: 'สุดท่อลอด (PIPE END)', group: 'อุปกรณ์เพิ่มเติม' },
   { code: 'TREE', description: 'ต้นไม้ (TREE)', group: 'สิ่งกีดขวาง / ธรรมชาติ' }
+  
 ]
 
 export const ROOM_CODE_PATTERN = /^R\d+[BE]$/i
