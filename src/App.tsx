@@ -250,9 +250,12 @@ const lifeRows = life.map((x, i) => ({
       }))
     ]
 
-    const layoutRows = layoutEntries
-      .sort((a, b) => b.distance - a.distance)
-      .map(entry => entry.row)
+// เรียงเฉพาะ Excel Layout จากระยะทางน้อยไปมากก่อน
+// แล้วกลับแถว เพื่อให้ระยะทางมากอยู่บน ระยะทางน้อยอยู่ล่าง
+const layoutRows = [...layoutEntries]
+  .sort((a, b) => Number(a.distance) - Number(b.distance))
+  .map(entry => entry.row)
+  .reverse()
 
     const wb = XLSX.utils.book_new()
     const ws1 = XLSX.utils.json_to_sheet(surveyRows)
