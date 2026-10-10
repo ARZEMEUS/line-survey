@@ -175,14 +175,15 @@ function App() {
       'ชุดข้อมูล 2': x.input2,
       'ชุดข้อมูล 3': x.input3,
       'ชุดข้อมูล 4': x.input4,
-      'X1 = 2-1': x.x1,
-      'X2 = 3-2-1': x.x2,
-      'X3 = 4-3-2-1': x.x3,
-      'X4 = 4': x.x4
+      'X1 = 1': x.x1,
+      'X2 = 2-1': x.x2,
+      'X3 = 3-2': x.x3,
+      'X4 = 4-3': x.x4
     }))
 
     // ชีต Excel Layout: รวม Survey Points และ Life of Way ตามระยะทาง
     // สำหรับแถว Life of Way, STA (m) ใช้ Distance และ X1-X4 ใช้ Input 1-4 โดยตรง
+
     const layoutEntries = [
       ...points.map(p => ({
         distance: p.distance,
@@ -191,10 +192,9 @@ function App() {
           'TEXT': p.remark,
           'BLOCK': p.side === 'LEFT' ? p.blockCode : '',
           'in/out': '',
-          'STA (m)': p.side === 'CENTER' ? p.distance : '',
+          'STA (m)': p.distance,
           'BLOCK_R': p.side === 'RIGHT' ? p.blockCode : '',
           'TEXT_R': p.side === 'RIGHT' ? p.description : '',
-          'Survey (m)': p.side === 'RIGHT' ? p.distance : '',
           'X1': '',
           'X2': '',
           'X3': '',
@@ -213,7 +213,6 @@ function App() {
           'STA (m)': x.distance,
           'BLOCK_R': '',
           'TEXT_R': '',
-          'Survey (m)': '',
           'X1': x.input1,
           'X2': x.input2,
           'X3': x.input3,
@@ -224,7 +223,10 @@ function App() {
       }))
     ]
 
-    
+    const layoutRows = layoutEntries
+      .sort((a, b) => a.distance - b.distance)
+      .map(entry => entry.row)
+
     const layoutRows = [
       ...points.map((p) => ({
         'ANGLE': '',
