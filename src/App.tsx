@@ -45,8 +45,8 @@ function App() {
       db.surveyPoints.where('projectId').equals(project.id).toArray(),
       db.lifeOfWays.where('projectId').equals(project.id).toArray()
     ]).then(([p, l]) => {
-      setPoints(p.sort((a, b) => a.distance - b.distance))
-      setLife(l.sort((a, b) => a.distance - b.distance))
+      setPoints(p.sort((a, b) => b.distance - a.distance))
+      setLife(l.sort((a, b) => b.distance - a.distance))
     })
   }, [project])
 
