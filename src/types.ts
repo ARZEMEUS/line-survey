@@ -16,6 +16,7 @@ export interface SurveyPoint {
   distance: number
   side: Side
   blockCode: string
+  angle?: number
   description: string
   remark: string
   surveyor: string
