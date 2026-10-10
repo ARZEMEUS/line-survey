@@ -251,7 +251,7 @@ const lifeRows = life.map((x, i) => ({
     ]
 
     const layoutRows = layoutEntries
-      .sort((a, b) => a.distance - b.distance)
+      .sort((a, b) => b.distance - a.distance)
       .map(entry => entry.row)
 
     const wb = XLSX.utils.book_new()
