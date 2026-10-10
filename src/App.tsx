@@ -276,7 +276,30 @@ const layoutRows = [...layoutEntries]
       'Description': x.description,
       'Group': x.group
     })))
-    const ws4 = XLSX.utils.json_to_sheet(layoutRows)
+    
+const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
+  header: [
+    'ANGLE',
+    'TEXT',
+    'BLOCK',
+    'in/out',
+    'STA (m)',
+    'in/out_R',
+    'BLOCK_R',
+    'TEXT_R',
+    'X1',
+    'X2',
+    'X3',
+    'X4',
+    'LANE',
+    'RESET'
+  ]
+})
+
+// กำหนดชื่อหัวตารางที่แสดงใน Excel
+if (ws4['F1']) ws4['F1'].v = 'in/out'
+if (ws4['H1']) ws4['H1'].v = 'TEXT'
+
   // คอลัมน์ F = in/out ฝั่งขวา
 if (ws4['F1']) {
   ws4['F1'].v = 'in/out'
