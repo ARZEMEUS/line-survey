@@ -5,7 +5,6 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig({
   base: '/line-survey/',
   plugins: [
-  plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
