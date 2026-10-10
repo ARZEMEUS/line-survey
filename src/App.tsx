@@ -99,6 +99,9 @@ function App() {
     }
 
     const requiresAngle = ['INL', 'INR', 'OUT'].includes(selectedCode)
+    if (requiresAngle && selectedSide === 'CENTER') {
+  return alert('กรุณาเลือกฝั่ง LEFT หรือ RIGHT สำหรับ INL, INR และ OUT')
+}
     let angleValue: number | undefined
 
     if (requiresAngle) {
@@ -210,26 +213,34 @@ const lifeRows = life.map((x, i) => ({
     // ใช้คอลัมน์ E (STA (m)) เก็บ Distance
     // ตัดคอลัมน์ Survey (m) ออก และใช้ Input 1-4 ลง X1-X4 โดยตรง
     const layoutEntries = [
-      ...points.map(p => ({
-        distance: p.distance,
-        row: {
-          'ANGLE': ['INL', 'INR', 'OUT'].includes(p.blockCode)
-  ? (p.angle ?? '')
-  : '',
-          'TEXT': p.remark,
-          'BLOCK': p.side === 'LEFT' ? p.blockCode : '',
-          'in/out': '',
-          'STA (m)': p.distance,
-          'BLOCK_R': p.side === 'RIGHT' ? p.blockCode : '',
-          'TEXT_R': p.side === 'RIGHT' ? p.description : '',
-          'X1': '',
-          'X2': '',
-          'X3': '',
-          'X4': '',
-          'LANE': '',
-          'RESET': ''
+      ...points.map(p => {
+        const isInOutCode = ['INL', 'INR', 'OUT'].includes(p.blockCode)
+
+        return {
+          distance: p.distance,
+          row: {
+            'ANGLE': isInOutCode ? (p.angle ?? '') : '',
+            'TEXT': p.remark,
+            'BLOCK': p.side === 'LEFT' && !isInOutCode
+              ? p.blockCode : '',
+            'in/out': p.side === 'LEFT' && isInOutCode
+              ? p.blockCode : '',
+            'STA (m)': p.distance,
+            'BLOCK_R': p.side === 'RIGHT' && !isInOutCode
+              ? p.blockCode : '',
+            'TEXT_R': p.side === 'RIGHT' && !isInOutCode
+              ? p.description : '',
+            'in/out_R': p.side === 'RIGHT' && isInOutCode
+              ? p.blockCode : '',
+            'X1': '',
+            'X2': '',
+            'X3': '',
+            'X4': '',
+            'LANE': '',
+            'RESET': ''
+          }
         }
-      })),
+      }),
       ...life.map(x => ({
         distance: x.distance,
         row: {
@@ -240,6 +251,7 @@ const lifeRows = life.map((x, i) => ({
           'STA (m)': x.distance,
           'BLOCK_R': '',
           'TEXT_R': '',
+          'in/out_R': '',
           'X1': x.input1,
           'X2': x.input2,
           'X3': x.input3,
@@ -249,6 +261,11 @@ const lifeRows = life.map((x, i) => ({
         }
       }))
     ]
+
+    const layoutRows = layoutEntries
+      .sort((a, b) => b.distance - a.distance)
+      .map(entry => entry.row)
+
 
 // เรียงเฉพาะ Excel Layout จากระยะทางน้อยไปมากก่อน
 // แล้วกลับแถว เพื่อให้ระยะทางมากอยู่บน ระยะทางน้อยอยู่ล่าง
@@ -266,6 +283,9 @@ const layoutRows = [...layoutEntries]
       'Group': x.group
     })))
     const ws4 = XLSX.utils.json_to_sheet(layoutRows)
+
+// ตั้งชื่อหัวคอลัมน์ฝั่งขวาให้ตรงกับฝั่งซ้าย
+if (ws4['H1']) ws4['H1'].v = 'in/out'
 
     ;[ws1, ws2, ws3, ws4].forEach(ws => {
       ws['!freeze'] = { xSplit: 0, ySplit: 1 }
