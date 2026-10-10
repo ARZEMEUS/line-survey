@@ -277,9 +277,14 @@ const layoutRows = [...layoutEntries]
       'Group': x.group
     })))
     const ws4 = XLSX.utils.json_to_sheet(layoutRows)
-    if (ws4['F1']) {
+  // คอลัมน์ F = in/out ฝั่งขวา
+if (ws4['F1']) {
   ws4['F1'].v = 'in/out'
-  ws4['F1'].w = 'in/out'
+}
+
+// คอลัมน์ H = TEXT ฝั่งขวา
+if (ws4['H1']) {
+  ws4['H1'].v = 'TEXT'
 }
 
 // ตั้งชื่อหัวคอลัมน์ฝั่งขวาให้ตรงกับฝั่งซ้าย
