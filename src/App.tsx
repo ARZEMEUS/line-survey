@@ -277,8 +277,8 @@ const layoutRows = [...layoutEntries]
       'Group': x.group
     })))
     
+
 const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
-  ws4['H1'].v = 'TEXT'
   header: [
     'ANGLE',
     'TEXT',
@@ -297,22 +297,9 @@ const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
   ]
 })
 
-// กำหนดชื่อหัวตารางที่แสดงใน Excel
 if (ws4['F1']) ws4['F1'].v = 'in/out'
 if (ws4['H1']) ws4['H1'].v = 'TEXT'
 
-  // คอลัมน์ F = in/out ฝั่งขวา
-if (ws4['F1']) {
-  ws4['F1'].v = 'in/out'
-}
-
-// คอลัมน์ H = TEXT ฝั่งขวา
-if (ws4['H1']) {
-  ws4['H1'].v = 'TEXT'
-}
-
-// ตั้งชื่อหัวคอลัมน์ฝั่งขวาให้ตรงกับฝั่งซ้าย
-if (ws4['H1']) ws4['H1'].v = 'in/out'
 
     ;[ws1, ws2, ws3, ws4].forEach(ws => {
       ws['!freeze'] = { xSplit: 0, ySplit: 1 }
