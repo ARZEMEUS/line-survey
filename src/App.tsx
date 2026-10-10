@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { db } from './db'
 import { BLOCK_CODES } from './data/blockCodes'
-import { calculateLifeOfWay } from './lib/lifeOfWay'
 import type { LifeOfWay, Project, Side, SurveyPoint } from './types'
 import * as XLSX from 'xlsx'
 import { saveAs } from 'file-saver'
@@ -19,6 +18,7 @@ function App() {
   const [selectedSide, setSelectedSide] = useState<Side>('RIGHT')
   const [distance, setDistance] = useState('0')
   const [selectedCode, setSelectedCode] = useState('P12')
+  const [angle, setAngle] = useState('')
   const [remark, setRemark] = useState('')
   const [lifeDistance, setLifeDistance] = useState('0')
   const [lifeInputs, setLifeInputs] = useState(['', '', '', ''])
@@ -89,44 +89,69 @@ function App() {
     })
   }
 
+
   async function addPoint() {
     if (!project) return
+
     const d = Number(distance)
     if (distance.trim() === '' || !Number.isFinite(d) || d < 0) {
       return alert('ระยะทางต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป')
     }
+
+    const requiresAngle = ['INL', 'INR', 'OUT'].includes(selectedCode)
+    let angleValue: number | undefined
+
+    if (requiresAngle) {
+      if (angle.trim() === '') {
+        return alert('กรุณากรอก ANGLE สำหรับ INL, INR หรือ OUT')
+      }
+
+      angleValue = Number(angle)
+      if (!Number.isFinite(angleValue)) {
+        return alert('ANGLE ต้องเป็นตัวเลข')
+      }
+    }
+
     const code = BLOCK_CODES.find(x => x.code === selectedCode)
       ?? visibleCodes.find(x => x.code === selectedCode)
+
     const p: SurveyPoint = {
       id: id(),
       projectId: project.id,
       distance: d,
       side: selectedSide,
       blockCode: selectedCode,
+      angle: angleValue,
       description: code?.description ?? '',
       remark,
       surveyor: project.surveyor,
       timestamp: now()
     }
+
     await db.surveyPoints.add(p)
     setPoints(prev => [...prev, p].sort((a, b) => a.distance - b.distance))
     setRemark('')
+    setAngle('')
   }
+
 
   async function addLifeOfWay() {
     if (!project) return
+
     if (lifeInputs.some(value => value.trim() === '')) {
-      return alert('Life of Way ต้องกรอก Input 1–4 ให้ครบทุกช่อง')
+      return alert('กรุณากรอก X1, X2, X3 และ X4 ให้ครบทุกช่อง')
     }
+
     const d = Number(lifeDistance)
     if (lifeDistance.trim() === '' || !Number.isFinite(d) || d < 0) {
       return alert('Distance ต้องเป็นตัวเลขตั้งแต่ 0 ขึ้นไป')
     }
+
     const nums = lifeInputs.map(Number)
     if (nums.some(n => !Number.isFinite(n))) {
-      return alert('Life of Way ต้องกรอกตัวเลขให้ครบ 4 ช่อง')
+      return alert('X1-X4 ต้องเป็นตัวเลข')
     }
-    const calc = calculateLifeOfWay(nums[0], nums[1], nums[2], nums[3])
+
     const row: LifeOfWay = {
       id: id(),
       projectId: project.id,
@@ -135,9 +160,14 @@ function App() {
       input2: nums[1],
       input3: nums[2],
       input4: nums[3],
-      ...calc,
+      // เก็บค่าตรง ๆ เพื่อรองรับโครงสร้างข้อมูลเดิม ไม่คำนวณสูตร
+      x1: nums[0],
+      x2: nums[1],
+      x3: nums[2],
+      x4: nums[3],
       timestamp: now()
     }
+
     await db.lifeOfWays.add(row)
     setLife(prev => [...prev, row].sort((a, b) => a.distance - b.distance))
     setLifeInputs(['', '', '', ''])
@@ -167,20 +197,14 @@ function App() {
       'Timestamp': p.timestamp
     }))
 
-    // ชีต Life of Way ยังคงแสดงผลคำนวณ X1-X4 ตามสูตรเดิม
-    const lifeRows = life.map((x, i) => ({
-      'ลำดับ': i + 1,
-      'ระยะทาง (m)': x.distance,
-      'ชุดข้อมูล 1': x.input1,
-      'ชุดข้อมูล 2': x.input2,
-      'ชุดข้อมูล 3': x.input3,
-      'ชุดข้อมูล 4': x.input4,
-      'X1 = 1': x.x1,
-      'X2 = 2-1': x.x2,
-      'X3 = 3-2': x.x3,
-      'X4 = 4-3': x.x4
-    }))
-
+const lifeRows = life.map((x, i) => ({
+  'ลำดับ': i + 1,
+  'Distance (m)': x.distance,
+  'X1': x.input1,
+  'X2': x.input2,
+  'X3': x.input3,
+  'X4': x.input4
+}))
 
     // Excel Layout: รวม Survey Points และ Life of Way ตามระยะทาง
     // ใช้คอลัมน์ E (STA (m)) เก็บ Distance
@@ -189,7 +213,9 @@ function App() {
       ...points.map(p => ({
         distance: p.distance,
         row: {
-          'ANGLE': '',
+          'ANGLE': ['INL', 'INR', 'OUT'].includes(p.blockCode)
+  ? (p.angle ?? '')
+  : '',
           'TEXT': p.remark,
           'BLOCK': p.side === 'LEFT' ? p.blockCode : '',
           'in/out': '',
@@ -329,37 +355,94 @@ function App() {
         <div className="form-grid">
           <label>Distance (m)<input inputMode="decimal" value={distance} onChange={e => setDistance(e.target.value)} /></label>
           <label>Block Code<button className="select-button" onClick={() => setShowCodes(true)}>{selectedCode}</button></label>
+          {['INL', 'INR', 'OUT'].includes(selectedCode) && (
+  <label>
+    ANGLE (จำเป็น)
+    <input
+      inputMode="decimal"
+      value={angle}
+      onChange={e => setAngle(e.target.value)}
+      placeholder="กรอกค่า ANGLE"
+    />
+  </label>
+)}
           <label>หมายเหตุ<input value={remark} onChange={e => setRemark(e.target.value)} placeholder="รายละเอียดเพิ่มเติม" /></label>
           <button className="primary big" onClick={addPoint}>SAVE</button>
         </div>
       </section>
 
-      <section className="life-card">
-        <div className="row-title"><h3>Life of Way</h3><span>บันทึก Distance และ Input 1–4 พร้อมคำนวณ X1–X4</span></div>
-        <div className="form-grid life-grid">
-          <label>Distance (m)<input inputMode="decimal" value={lifeDistance} onChange={e => setLifeDistance(e.target.value)} /></label>
-          {[0, 1, 2, 3].map(i => <label key={i}>Input {i + 1}<input
+     
+  <section className="life-card">
+    <div className="row-title">
+      <h3>Life of Way</h3>
+      <span>กรอก Distance และ X1-X4 โดยตรง ไม่มีการคำนวณ</span>
+    </div>
+
+    <div className="form-grid life-grid">
+      <label>
+        Distance (m)
+        <input
+          inputMode="decimal"
+          value={lifeDistance}
+          onChange={e => setLifeDistance(e.target.value)}
+        />
+      </label>
+
+      {[0, 1, 2, 3].map(i => (
+        <label key={i}>
+          X{i + 1}
+          <input
             inputMode="decimal"
             value={lifeInputs[i]}
-            onChange={e => setLifeInputs(v => v.map((x, j) => j === i ? e.target.value : x))}
-          /></label>)}
-          <button className="primary big" onClick={addLifeOfWay}>CALCULATE + SAVE</button>
-        </div>
-        <div className="formula">
-          <span>X1 = 2 − 1</span><span>X2 = 3 − 2 − 1</span><span>X3 = 4 − 3 − 2 − 1</span><span>X4 = 4</span>
-        </div>
-        <div className="table-wrap">
-          <table>
-            <thead><tr><th>m</th><th>1</th><th>2</th><th>3</th><th>4</th><th>X1</th><th>X2</th><th>X3</th><th>X4</th><th></th></tr></thead>
-            <tbody>{life.map(x => <tr key={x.id}>
+            onChange={e =>
+              setLifeInputs(v =>
+                v.map((x, j) => j === i ? e.target.value : x)
+              )
+            }
+          />
+        </label>
+      ))}
+
+      <button className="primary big" onClick={addLifeOfWay}>
+        SAVE
+      </button>
+    </div>
+
+    <div className="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Distance (m)</th>
+            <th>X1</th>
+            <th>X2</th>
+            <th>X3</th>
+            <th>X4</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {life.map(x => (
+            <tr key={x.id}>
               <td>{x.distance.toFixed(2)}</td>
-              <td>{x.input1.toFixed(2)}</td><td>{x.input2.toFixed(2)}</td><td>{x.input3.toFixed(2)}</td><td>{x.input4.toFixed(2)}</td>
-              <td>{x.x1.toFixed(2)}</td><td>{x.x2.toFixed(2)}</td><td>{x.x3.toFixed(2)}</td><td>{x.x4.toFixed(2)}</td>
-              <td><button className="danger" onClick={() => removeLife(x.id)}>Delete</button></td>
-            </tr>)}</tbody>
-          </table>
-        </div>
-      </section>
+              <td>{x.input1.toFixed(2)}</td>
+              <td>{x.input2.toFixed(2)}</td>
+              <td>{x.input3.toFixed(2)}</td>
+              <td>{x.input4.toFixed(2)}</td>
+              <td>
+                <button
+                  className="danger"
+                  onClick={() => removeLife(x.id)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
 
       <section className="data-card">
         <div className="row-title"><h3>Saved Data</h3><span>{points.length} survey points · {life.length} Life of Way rows</span></div>
