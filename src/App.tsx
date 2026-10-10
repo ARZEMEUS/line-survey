@@ -209,27 +209,28 @@ const lifeRows = life.map((x, i) => ({
   'X4': x.input4
 }))
 
-
     const layoutEntries = [
       ...points.map(p => {
-        const isInOutCode = ['ST', 'OUT'].includes(p.blockCode)
+        const isInOutCode = ['INL', 'INR', 'OUT'].includes(p.blockCode)
 
         return {
           distance: p.distance,
           row: {
-            'ANGLE': isInOutCode ? (p.angle ?? '') : '',
+            'ANGLE': ['ST', 'OUT'].includes(p.blockCode)
+              ? (p.angle ?? '')
+              : '',
             'TEXT': p.remark,
             'BLOCK': p.side === 'LEFT' && !isInOutCode
               ? p.blockCode : '',
             'in/out': p.side === 'LEFT' && isInOutCode
               ? p.blockCode : '',
             'STA (m)': p.distance,
+            'in/out_R': p.side === 'RIGHT' && isInOutCode
+              ? p.blockCode : '',
             'BLOCK_R': p.side === 'RIGHT' && !isInOutCode
               ? p.blockCode : '',
             'TEXT_R': p.side === 'RIGHT' && !isInOutCode
               ? p.description : '',
-            'in/out_R': p.side === 'RIGHT' && isInOutCode
-              ? p.blockCode : '',
             'X1': '',
             'X2': '',
             'X3': '',
@@ -247,9 +248,9 @@ const lifeRows = life.map((x, i) => ({
           'BLOCK': '',
           'in/out': '',
           'STA (m)': x.distance,
+          'in/out_R': '',
           'BLOCK_R': '',
           'TEXT_R': '',
-          'in/out_R': '',
           'X1': x.input1,
           'X2': x.input2,
           'X3': x.input3,
@@ -276,6 +277,10 @@ const layoutRows = [...layoutEntries]
       'Group': x.group
     })))
     const ws4 = XLSX.utils.json_to_sheet(layoutRows)
+    if (ws4['F1']) {
+  ws4['F1'].v = 'in/out'
+  ws4['F1'].w = 'in/out'
+}
 
 // ตั้งชื่อหัวคอลัมน์ฝั่งขวาให้ตรงกับฝั่งซ้าย
 if (ws4['H1']) ws4['H1'].v = 'in/out'
