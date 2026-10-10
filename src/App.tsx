@@ -278,6 +278,7 @@ const layoutRows = [...layoutEntries]
     })))
     
 const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
+  ws4['H1'].v = 'TEXT'
   header: [
     'ANGLE',
     'TEXT',
