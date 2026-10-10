@@ -10,6 +10,7 @@ export const BLOCK_CODES: BlockCode[] = [
   { code: 'S3', description: 'ซอยกว้าง 3 เมตร', group: 'ซอย' },
   { code: 'S4', description: 'ซอยกว้าง 4 เมตร', group: 'ซอย' },
   { code: 'S5', description: 'ซอยกว้าง 5 เมตร (TREE / ต้นไม้)', group: 'ซอย' },
+  { code: 'TREE', description: 'ต้นไม้ (TREE)', group: 'สิ่งกีดขวาง / ธรรมชาติ' },
   { code: 'S6', description: 'ซอยกว้าง 6 เมตร', group: 'ซอย' },
   { code: 'S7', description: 'ซอยกว้าง 7 เมตร (SL / ศาลาทางหลวง)', group: 'ซอย' },
   { code: 'S8', description: 'ซอยกว้าง 8 เมตร (SC / SCHOOL)', group: 'ซอย' },
@@ -39,15 +40,13 @@ export const BLOCK_CODES: BlockCode[] = [
   { code: 'P12L', description: 'เสาเดิม + ไฟสาธารณะ (P12 OLD WITH LIGHT)', group: 'เสาเดิม' },
   { code: 'P9', description: 'เสาเดิม (P9 OLD)', group: 'เสาเดิม' },
   { code: 'P8', description: 'เสาเดิม (P8 OLD)', group: 'เสาเดิม' },
-  { code: 'P8L', description: 'เสาเดิม + ไฟสาธารณะ (P8 OLD WITH LIGHT)', group: 'เสาเดิม' },
+  { code: 'P8L', description: 'เสาเดิม (P8 OLD WITH LIGHT)', group: 'เสาเดิม' },
   { code: 'EGAT115', description: 'จุดกึ่งกลาง Line EGAT 115 kV', group: 'แนวสายส่ง EGAT' },
   { code: 'EGAT230', description: 'จุดกึ่งกลาง Line EGAT 230 kV', group: 'แนวสายส่ง EGAT' },
   { code: 'EGAT500', description: 'จุดกึ่งกลาง Line EGAT 500 kV', group: 'แนวสายส่ง EGAT' },
   { code: 'PIPE', description: 'ท่อลอด (PIPE)', group: 'อุปกรณ์เพิ่มเติม' },
   { code: 'PIB', description: 'เริ่มท่อลอด (PIPE BEGIN)', group: 'อุปกรณ์เพิ่มเติม' },
-  { code: 'PIE', description: 'สุดท่อลอด (PIPE END)', group: 'อุปกรณ์เพิ่มเติม' },
-  { code: 'TREE', description: 'ต้นไม้ (TREE)', group: 'สิ่งกีดขวาง / ธรรมชาติ' }
-  
+  { code: 'PIE', description: 'สุดท่อลอด (PIPE END)', group: 'อุปกรณ์เพิ่มเติม' }
 ]
 
 export const ROOM_CODE_PATTERN = /^R\d+[BE]$/i
