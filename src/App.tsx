@@ -274,7 +274,6 @@ const layoutRows = [...layoutEntries]
     
 
 const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
-  if (ws4['F1']) ws4['F1'].v = 'BLOCK'
   header: [
     'ANGLE',
     'TEXT',
@@ -294,7 +293,7 @@ const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
 
 if (ws4['F1']) ws4['F1'].v = ''
 if (ws4['G1']) ws4['G1'].v = 'TEXT'
-
+if (ws4['F1']) ws4['F1'].v = 'BLOCK'
 
     ;[ws1, ws2, ws3, ws4].forEach(ws => {
       ws['!freeze'] = { xSplit: 0, ySplit: 1 }
