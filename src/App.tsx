@@ -223,7 +223,6 @@ const lifeRows = life.map((x, i) => ({
             'BLOCK': p.side === 'LEFT' && !isInOutCode
               ? p.blockCode : '',
             'in/out': isInOutCode ? p.blockCode : '',
-            'in/out_R': '',
             'BLOCK_R': p.side === 'RIGHT' && !isInOutCode
               ? p.blockCode : '',
             'TEXT_R': p.side === 'RIGHT' && !isInOutCode
@@ -245,7 +244,6 @@ const lifeRows = life.map((x, i) => ({
           'BLOCK': '',
           'in/out': '',
           'STA (m)': x.distance,
-          'in/out_R': '',
           'BLOCK_R': '',
           'TEXT_R': '',
           'X1': x.input1,
@@ -282,7 +280,6 @@ const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
     'BLOCK',
     'in/out',
     'STA (m)',
-    'in/out_R',
     'BLOCK_R',
     'TEXT_R',
     'X1',
@@ -295,7 +292,7 @@ const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
 })
 
 if (ws4['F1']) ws4['F1'].v = ''
-if (ws4['H1']) ws4['H1'].v = 'TEXT'
+if (ws4['G1']) ws4['G1'].v = 'TEXT'
 
 
     ;[ws1, ws2, ws3, ws4].forEach(ws => {
