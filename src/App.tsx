@@ -223,6 +223,7 @@ const lifeRows = life.map((x, i) => ({
             'BLOCK': p.side === 'LEFT' && !isInOutCode
               ? p.blockCode : '',
             'in/out': isInOutCode ? p.blockCode : '',
+            'STA (m)': p.distance,
             'BLOCK_R': p.side === 'RIGHT' && !isInOutCode
               ? p.blockCode : '',
             'TEXT_R': p.side === 'RIGHT' ? p.remark : '',
