@@ -222,11 +222,8 @@ const lifeRows = life.map((x, i) => ({
             'TEXT': p.remark,
             'BLOCK': p.side === 'LEFT' && !isInOutCode
               ? p.blockCode : '',
-            'in/out': p.side === 'LEFT' && isInOutCode
-              ? p.blockCode : '',
-            'STA (m)': p.distance,
-            'in/out_R': p.side === 'RIGHT' && isInOutCode
-              ? p.blockCode : '',
+            'in/out': isInOutCode ? p.blockCode : '',
+            'in/out_R': '',
             'BLOCK_R': p.side === 'RIGHT' && !isInOutCode
               ? p.blockCode : '',
             'TEXT_R': p.side === 'RIGHT' && !isInOutCode
@@ -297,7 +294,7 @@ const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
   ]
 })
 
-if (ws4['F1']) ws4['F1'].v = 'in/out'
+if (ws4['F1']) ws4['F1'].v = ''
 if (ws4['H1']) ws4['H1'].v = 'TEXT'
 
 
