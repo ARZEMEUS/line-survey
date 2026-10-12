@@ -219,14 +219,13 @@ const lifeRows = life.map((x, i) => ({
             'ANGLE': ['ST', 'OUT'].includes(p.blockCode)
               ? (p.angle ?? '')
               : '',
-            'TEXT': p.remark,
+            'TEXT': p.side === 'LEFT' ? p.remark : '',
             'BLOCK': p.side === 'LEFT' && !isInOutCode
               ? p.blockCode : '',
             'in/out': isInOutCode ? p.blockCode : '',
             'BLOCK_R': p.side === 'RIGHT' && !isInOutCode
               ? p.blockCode : '',
-            'TEXT_R': p.side === 'RIGHT' && !isInOutCode
-              ? p.description : '',
+            'TEXT_R': p.side === 'RIGHT' ? p.remark : '',
             'X1': '',
             'X2': '',
             'X3': '',
