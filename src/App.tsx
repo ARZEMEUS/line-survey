@@ -274,6 +274,7 @@ const layoutRows = [...layoutEntries]
     
 
 const ws4 = XLSX.utils.json_to_sheet(layoutRows, {
+  if (ws4['F1']) ws4['F1'].v = 'BLOCK'
   header: [
     'ANGLE',
     'TEXT',
