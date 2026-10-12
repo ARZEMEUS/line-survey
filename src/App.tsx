@@ -186,6 +186,50 @@ function App() {
     setLife(prev => prev.filter(x => x.id !== rowId))
   }
 
+async function removeProject(projectToDelete: Project) {
+  const confirmed = window.confirm(
+    `ยืนยันลบโครงการ "${projectToDelete.name}" หรือไม่?\n\nข้อมูลสำรวจและ Life of Way ของโครงการนี้จะถูกลบทั้งหมด และไม่สามารถกู้คืนได้`
+  )
+
+  if (!confirmed) return
+
+  try {
+    await db.transaction(
+      'rw',
+      db.projects,
+      db.surveyPoints,
+      db.lifeOfWays,
+      async () => {
+        await db.surveyPoints
+          .where('projectId')
+          .equals(projectToDelete.id)
+          .delete()
+
+        await db.lifeOfWays
+          .where('projectId')
+          .equals(projectToDelete.id)
+          .delete()
+
+        await db.projects.delete(projectToDelete.id)
+      }
+    )
+
+    setProjects(prev =>
+      prev.filter(item => item.id !== projectToDelete.id)
+    )
+
+    if (project?.id === projectToDelete.id) {
+      setProject(null)
+      setPoints([])
+      setLife([])
+    }
+  } catch (error) {
+    console.error('Failed to delete project:', error)
+    window.alert('ลบโครงการไม่สำเร็จ กรุณาลองใหม่อีกครั้ง')
+  }
+}
+
+  
   function exportExcel() {
     if (!project) return
 
