@@ -364,9 +364,47 @@ if (ws4['F1']) ws4['F1'].v = 'BLOCK'
       <main className="project-home">
         <div className="hero-card"><h1>Field Survey</h1><p>ระบบสำรวจแนวถนนและเก็บ Block Code แบบ Offline-first</p></div>
         <div className="project-grid">
-          {projects.map(p => <button key={p.id} className="project-card" onClick={() => setProject(p)}>
-            <h3>{p.name}</h3><p>{p.area}</p><small>{p.surveyDate} · {p.surveyor}</small>
-          </button>)}
+          
+{projects.map(p => (
+  <div
+    key={p.id}
+    style={{ position: 'relative' }}
+  >
+    <button
+      type="button"
+      className="project-card"
+      style={{
+        width: '100%',
+        textAlign: 'left',
+        paddingRight: '3.5rem'
+      }}
+      onClick={() => setProject(p)}
+    >
+      <h3>{p.name}</h3>
+      <p>{p.area}</p>
+      <small>
+        {p.surveyDate} · {p.surveyor}
+      </small>
+    </button>
+
+    <button
+      type="button"
+      className="danger"
+      aria-label={'ลบโครงการ ' + p.name}
+      title="ลบโครงการ"
+      onClick={() => void removeProject(p)}
+      style={{
+        position: 'absolute',
+        top: '0.5rem',
+        right: '0.5rem',
+        zIndex: 1
+      }}
+    >
+      ลบ
+    </button>
+  </div>
+))}
+
           {!projects.length && <div className="empty">ยังไม่มีโครงการ กด “New Project” เพื่อเริ่มต้น</div>}
         </div>
       </main>
